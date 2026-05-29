@@ -53,6 +53,12 @@ cost = twm.CoherenceCost(predict_fn, horizon=8)
 solver = CEMSolver(model=cost, num_samples=256, device="cuda")
 ```
 
+## Example
+
+[`examples/collect_and_plan.py`](examples/collect_and_plan.py) runs the loop end to
+end: swm collects trajectories from the OS-world, they load back as a swm dataset,
+and coherence-R ranks candidate changes (picking the goal-reaching one).
+
 ## Status
 
 The env, the dataset format, and the coherence cost are implemented and tested
