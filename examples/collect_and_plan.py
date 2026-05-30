@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: AGPL-3.0-or-later
 # Copyright 2026 Intuition Labs LLC
 """End to end: stable-worldmodel collects from the OS-world, and coherence-R ranks
 config changes.

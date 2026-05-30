@@ -4,15 +4,14 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "terminals-worldmodel"
-version = "0.1.0"
+version = "0.2.0"
 description = "stable-worldmodel for the agent/OS configuration world: a non-physical env, a usage-trace dataset format, and a coherence-stability planning cost."
 readme = "README.md"
 requires-python = ">=3.10"
-license = "Apache-2.0"
+license = "AGPL-3.0-or-later"
 authors = [{ name = "Intuition Labs LLC", email = "29216465+wheattoast11@users.noreply.github.com" }]
 keywords = ["world-model", "jepa", "stable-worldmodel", "model-predictive-control", "agent", "gymnasium"]
 classifiers = [
-    "License :: OSI Approved :: Apache Software License",
     "Intended Audience :: Science/Research",
     "Programming Language :: Python :: 3",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",

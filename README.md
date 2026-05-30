@@ -77,4 +77,4 @@ natural encoder for structured config state and a clean next step.
 
 ## License
 
-Apache-2.0 · Copyright 2026 Intuition Labs LLC. See `LICENSE` and `NOTICE`.
+AGPL-3.0-or-later · Copyright (c) 2026 Tej Desai / Intuition Labs LLC. See `LICENSE` and `NOTICE`.
