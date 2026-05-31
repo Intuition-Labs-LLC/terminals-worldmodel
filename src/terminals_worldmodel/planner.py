@@ -94,6 +94,11 @@ class ZeroPlanner:
             pc["_coherence_R"] = round(v.coherence_R, 4)
             pc["_goal_progress"] = round(progress, 4) if progress is not None else None
             pc["_crystallized"] = v.crystallized
+            pc["_collapse_quality"] = (
+                round(v.collapse_quality, 4)
+                if v.collapse_quality is not None
+                else None
+            )
             proposals.append(pc)
 
         return PlanResult(
