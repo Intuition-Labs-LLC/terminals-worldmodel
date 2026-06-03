@@ -27,6 +27,13 @@ from typing import Optional, Sequence
 import numpy as np
 
 try:  # standalone: the grokker collapse cross-check is optional
+    # Put the grokker repo on sys.path so the installed package resolves the
+    # collapse detector regardless of cwd — same convention as zero_router.py.
+    import os
+    import sys
+
+    _g = os.environ.get("GROKKER_REPO", "/var/home/zero/irc-strix-halo")
+    _g in sys.path or sys.path.insert(0, _g)
     from src.irc.collapse_detector import CollapseDetector
 except Exception:  # noqa: BLE001
     CollapseDetector = None

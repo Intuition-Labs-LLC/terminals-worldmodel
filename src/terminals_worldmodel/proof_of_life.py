@@ -50,6 +50,10 @@ def proof_of_life(quick: bool = True) -> dict:
         "ok": stability_ok,
         "R_converging": round(v_conv.coherence_R, 4),
         "R_wandering": round(v_wander.coherence_R, 4),
+        # Grokker cross-check: the collapse detector's own quality score on the
+        # converging rollout's displacement signal. Honest None until the grokker
+        # CollapseDetector import resolves (it gates itself in assess_rollout).
+        "collapse_quality": v_conv.collapse_quality,
     }
 
     # Mechanism proof: a tiny learned predictor beats the no-model (identity)
