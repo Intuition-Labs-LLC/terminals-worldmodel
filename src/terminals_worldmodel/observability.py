@@ -86,3 +86,53 @@ def read_transitions(path=None) -> List[dict]:
             except json.JSONDecodeError:
                 continue
     return out
+
+
+def fold_actual_next(session_id, actual_obs_vector, path=None) -> bool:
+    """Close the predict->actual loop: patch the newest OPEN row for ``session_id``
+    (one with ``predicted_next`` set and ``actual_next`` still ``None``) by writing
+    this turn's observation into its ``actual_next``.
+
+    The producer logs ONE row at proposal time — predicted_next set, actual_next
+    None. The NEXT same-session observation IS the actual outcome of the prior
+    turn's predicted action, so it folds back here. Once folded, the pair
+    ``(predicted_next, actual_next)`` is a closed, measurable transition:
+    ``error = ||predicted_next - actual_next||``.
+
+    Append-only-safe: rewrites the file in place ONLY when exactly one open row is
+    found (the newest), and is a no-op (returns False) otherwise — no row to fold,
+    no trace file, or a bad vector all degrade closed. For n=1 single-user the
+    in-place rewrite is correct and simple; higher concurrency would swap a sidecar
+    index. Returns True iff a row was folded.
+    """
+    p = path or trace_path()
+    if not p.exists():
+        return False
+    try:
+        folded = _to_list(actual_obs_vector)
+    except Exception:
+        return False
+    if folded is None:
+        return False
+    rows = read_transitions(p)
+    if not rows:
+        return False
+    target = None
+    for i in range(len(rows) - 1, -1, -1):  # newest first
+        r = rows[i]
+        if (
+            r.get("session_id") == session_id
+            and r.get("predicted_next") is not None
+            and r.get("actual_next") is None
+        ):
+            target = i
+            break
+    if target is None:
+        return False  # no open row for this session → no-op
+    rows[target]["actual_next"] = folded
+    tmp = p.with_suffix(p.suffix + ".tmp")
+    with open(tmp, "w", encoding="utf-8") as f:
+        for r in rows:
+            f.write(json.dumps(r) + "\n")
+    tmp.replace(p)  # atomic on POSIX
+    return True

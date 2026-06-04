@@ -22,7 +22,12 @@ from .capabilities import swm_usable
 from .config import LATENT_DIM, trace_path, world_model_enabled
 from .demo import DemoWorldModel, run_planning_demo
 from .micro_eval import MicroEvalResult, run_micro_eval
-from .observability import SCHEMA_VERSION, log_transition, read_transitions
+from .observability import (
+    SCHEMA_VERSION,
+    fold_actual_next,
+    log_transition,
+    read_transitions,
+)
 from .observation import PageObservation, encode_page_context
 from .planner import PlanResult, ZeroPlanner
 from .proof_of_life import proof_of_life
@@ -57,7 +62,8 @@ __all__ = [
     "HAS_SWM", "HAS_TORCH", "HAS_TORCH_GPU", "LATENT_DIM", "MicroEvalResult",
     "OSAction", "PageObservation", "PlanResult", "RolloutVerdict", "SCHEMA_VERSION",
     "TerminalsOSEnv", "TerminalsWorld", "WORLD_ID", "ZeroPlanner", "__version__",
-    "assess_rollout", "encode_page_context", "log_transition", "proof_of_life",
+    "assess_rollout", "encode_page_context", "fold_actual_next", "log_transition",
+    "proof_of_life",
     "read_transitions", "register", "register_env", "register_format",
     "register_swm_native", "register_terminals_format", "run_micro_eval",
     "run_planning_demo", "swm_usable", "trace_path", "world_model_enabled",

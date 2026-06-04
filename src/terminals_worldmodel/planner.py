@@ -94,6 +94,11 @@ class ZeroPlanner:
             pc["_coherence_R"] = round(v.coherence_R, 4)
             pc["_goal_progress"] = round(progress, 4) if progress is not None else None
             pc["_crystallized"] = v.crystallized
+            # The rollout's terminal latent — the world model's PREDICTION of the
+            # state this action settles into. ``_``-prefixed so the proposal-strip
+            # in _rank_proposals_by_world_model keeps it off the surfaced wire; it
+            # is an internal carrier so the producer can log predicted_next.
+            pc["_predicted_next"] = z_h  # np.ndarray, dim=LATENT_DIM
             pc["_collapse_quality"] = (
                 round(v.collapse_quality, 4)
                 if v.collapse_quality is not None
