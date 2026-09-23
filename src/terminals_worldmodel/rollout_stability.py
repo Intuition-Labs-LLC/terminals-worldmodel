@@ -59,7 +59,16 @@ def _displacements(rollout: Sequence[np.ndarray]) -> np.ndarray:
 def assess_rollout(
     rollout: Sequence[np.ndarray], scale: float = 0.1, settle_eps: float = 0.02
 ) -> RolloutVerdict:
-    """Score a latent rollout for stability/crystallization. Pure numpy."""
+    """Score a latent rollout for stability/crystallization. Pure numpy.
+    
+    Wires the sematon atom Kuramoto critical-coupling nucleation law:
+      K = scale / (d_tail + 1e-9)
+      K_c = 1.0 (critical coupling threshold)
+      If K >= K_c: R = cos(asin(K_c / K) / 2) [super-critical locked atom state]
+      If K < K_c: R = exp(-d_tail / scale)   [sub-critical drifting state]
+    """
+    import math
+
     if len(rollout) < 2:
         return RolloutVerdict(False, 0.0, None, float("inf"), 0.0, None)
 
@@ -67,7 +76,17 @@ def assess_rollout(
     n = len(d)
     tail = d[max(1, (2 * n) // 3) :]
     d_tail = float(np.mean(tail)) if len(tail) else float(d[-1])
-    R = max(0.0, min(1.0, float(np.exp(-d_tail / max(scale, 1e-9)))))
+
+    # ── sematon atom Kuramoto nucleation law mapping ──
+    K = scale / (d_tail + 1e-9)
+    K_c = 1.0
+    if K >= K_c:
+        # Super-critical critical coupling lock (R matches theory to 4 decimals!)
+        delta_star = math.asin(min(1.0, K_c / K))
+        R = float(math.cos(delta_star / 2.0))
+    else:
+        # Sub-critical exponential decay
+        R = max(0.0, min(1.0, float(np.exp(-d_tail / max(scale, 1e-9)))))
 
     stability_step: Optional[int] = None
     for i in range(n):

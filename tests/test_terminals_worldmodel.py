@@ -64,3 +64,23 @@ def test_register_wires_both():
     pytest.importorskip("stable_worldmodel")
     reg = register()
     assert reg["env"] == ENV_ID and reg["format"] == FORMAT_NAME
+
+
+def test_nucleation_law_locks_above_critical_coupling_and_decays_below():
+    import math
+
+    scale = 0.1
+    steps = 31
+    # d_tail below scale: K = scale / d_tail >= 1, the locked atom branch
+    locked = assess_rollout([np.full(3, i * 0.02 / math.sqrt(3)) for i in range(steps)], scale)
+    K = scale / (locked.tail_displacement + 1e-9)
+    assert K >= 1.0
+    assert locked.coherence_R == pytest.approx(math.cos(math.asin(1.0 / K) / 2.0), abs=1e-9)
+    # d_tail above scale: K < 1, the sub-critical branch
+    drifting = assess_rollout([np.full(3, i * 0.5 / math.sqrt(3)) for i in range(steps)], scale)
+    assert scale / drifting.tail_displacement < 1.0
+    assert drifting.coherence_R == pytest.approx(math.exp(-drifting.tail_displacement / scale), abs=1e-9)
+    assert locked.coherence_R > drifting.coherence_R
+    # the fixed point: no displacement at all reads R = 1
+    still = assess_rollout([np.ones(3) for _ in range(steps)], scale)
+    assert still.coherence_R == pytest.approx(1.0, abs=1e-9)
